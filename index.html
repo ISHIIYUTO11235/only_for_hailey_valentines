@@ -61,6 +61,7 @@
             <span class="pink-word">love</span> you so much.</p>
             <p>これからもずっと一緒にいてね。<br>
             いつも<span class="pink-word">love</span>してる。</p>
+            <p class="letter-rotate" id="letterRotate"></p>
             <p class="letter-sign">From your <span class="pink-word">love</span> 💗</p>
             <!-- ========== ここまで編集可能 ========== -->
           </div>
@@ -74,6 +75,29 @@
       </div>
     </div>
   </main>
+
+  <!-- クロネコクリックゲーム用パネル -->
+  <div class="cat-game-panel" id="catGamePanel">
+    <div class="cat-game-title">stinky clicker</div>
+    <div class="cat-game-row">
+      <span>Points</span><span id="catPoints">0</span>
+    </div>
+    <div class="cat-game-row">
+      <span>Cats</span><span id="catCats">1</span>
+      <span>Level</span><span id="catLevel">0</span>
+    </div>
+    <div class="cat-game-row">
+      <span>Combo</span><span id="catCombo">0</span>
+      <span>Best</span><span id="catMaxCombo">0</span>
+    </div>
+    <div class="cat-game-row">
+      <span>Per tap</span><span id="catPerTap">1</span>
+    </div>
+    <div class="cat-game-actions">
+      <button type="button" id="btnBuyCat">+1 ねこ（50 pt）</button>
+      <button type="button" id="btnLevelUp">Level Up（120 pt）</button>
+    </div>
+  </div>
 
   <script src="script.js"></script>
 </body>
