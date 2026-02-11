@@ -5,6 +5,25 @@
   const BUTTERFLY_COUNT = 5;
   const HEART_COUNT = 12;
   const HEARTS = ['♥', '💕', '💗', '💖', '💘', '💝'];
+  const CAT_COOKIE_NAME = 'haileyCatGameV1';
+  const TWO_DAYS_MS = 1000 * 60 * 60 * 24 * 2;
+  // 今日（2026-02-11）を基点に二日に一回メッセージを進める
+  const LETTER_BASE_TIME = new Date('2026-02-11T00:00:00+09:00').getTime();
+
+  // 2日に1回切り替える一言メッセージ（自由に編集OK）
+  const LETTER_ROTATE_MESSAGES = [
+    'wow u open this again, im grad',
+    'wth im so grad u open this again ',
+    'i know u feel lonly or sad sametimes , jut call me',
+    "おはよう　miss u ",
+    "this site going to close sometime so u can screenshot love ya",
+    "my wallpaper is haileys tits pic now, i mean my room wallpaper",
+    "im not good at telling love so if u feel im dont love u , u r wrong",
+    "okey this comment is a final, thank u for enjoy this gift , i love u",
+    "i told u the comment was final",
+    "probably u dont know that i sometime feel lonly and im thinking whether or not i call u ",
+
+  ];
 
   function createSakura() {
     const container = document.querySelector('.sakura-container');
@@ -76,6 +95,22 @@
     }
   }
 
+  // 手紙の中の「一言」メッセージを2日に1回切り替え
+  function applyLetterRotateMessage() {
+    const target = document.getElementById('letterRotate');
+    if (!target) return;
+    if (!Array.isArray(LETTER_ROTATE_MESSAGES) || LETTER_ROTATE_MESSAGES.length === 0) return;
+
+    const now = Date.now();
+    let steps = 0;
+    const diff = now - LETTER_BASE_TIME;
+    if (diff > 0) {
+      steps = Math.floor(diff / TWO_DAYS_MS);
+    }
+    const index = steps % LETTER_ROTATE_MESSAGES.length;
+    target.innerHTML = LETTER_ROTATE_MESSAGES[index];
+  }
+
   function initLetter() {
     const closed = document.getElementById('letterClosed');
     const opened = document.getElementById('letterOpened');
@@ -111,11 +146,71 @@
     }
   }
 
+  // --- Cookie helpers for cat game ---
+  function loadCatState() {
+    try {
+      const all = document.cookie.split(';').map(function (c) { return c.trim(); });
+      const found = all.find(function (c) { return c.indexOf(CAT_COOKIE_NAME + '=') === 0; });
+      if (!found) return null;
+      const value = decodeURIComponent(found.split('=')[1] || '');
+      const data = JSON.parse(value);
+      return data && typeof data === 'object' ? data : null;
+    } catch (_) {
+      return null;
+    }
+  }
+
+  function saveCatState(state) {
+    try {
+      const json = encodeURIComponent(JSON.stringify(state));
+      const oneYear = 60 * 60 * 24 * 365;
+      document.cookie = CAT_COOKIE_NAME + '=' + json + '; max-age=' + oneYear + '; path=/';
+    } catch (_) {}
+  }
+
+  function formatNumber(n) {
+    try {
+      return n.toLocaleString('en-US');
+    } catch (_) {
+      return String(n);
+    }
+  }
+
   function initCat() {
-    const wrap = document.querySelector('.float-cat-wrap');
-    const cat = document.getElementById('floatCat');
-    const speech = document.getElementById('catSpeech');
-    if (!wrap || !cat || !speech) return;
+    const firstWrap = document.querySelector('.float-cat-wrap');
+    const firstCat = document.getElementById('floatCat');
+    const firstSpeech = document.getElementById('catSpeech');
+    if (!firstWrap || !firstCat || !firstSpeech) return;
+
+    // --- Game state (永続化される部分) ---
+    var state = {
+      points: 0,
+      cats: 1,
+      level: 0,
+      maxComboEver: 0,
+    };
+
+    var saved = loadCatState();
+    if (saved) {
+      if (typeof saved.points === 'number') state.points = saved.points;
+      if (typeof saved.cats === 'number' && saved.cats >= 1) state.cats = saved.cats;
+      if (typeof saved.level === 'number') state.level = saved.level;
+      if (typeof saved.maxComboEver === 'number') state.maxComboEver = saved.maxComboEver;
+    }
+
+    // --- Combo management (メモリのみ) ---
+    var currentCombo = 0;
+    var lastTapTime = 0;
+
+    // --- UI elements ---
+    var pointsEl = document.getElementById('catPoints');
+    var catsEl = document.getElementById('catCats');
+    var levelEl = document.getElementById('catLevel');
+    var comboEl = document.getElementById('catCombo');
+    var maxComboEl = document.getElementById('catMaxCombo');
+    var perTapEl = document.getElementById('catPerTap');
+    var buyCatBtn = document.getElementById('btnBuyCat');
+    var levelUpBtn = document.getElementById('btnLevelUp');
 
     var catSound = new Audio('haileyIMGs/cat32.mp3');
 
@@ -126,10 +221,11 @@
       } catch (_) {}
     }
 
-    function showSpeech() {
-      speech.classList.add('visible');
+    function showSpeech(el) {
+      if (!el) return;
+      el.classList.add('visible');
       setTimeout(function () {
-        speech.classList.remove('visible');
+        el.classList.remove('visible');
       }, 600);
     }
 
@@ -146,34 +242,177 @@
       } else {
         left = randomPercent(72, 95);
       }
-      if (Math.random() < 0.5) {
-        top = randomPercent(4, 24);
-      } else {
-        top = randomPercent(76, 92);
-      }
+      // stinky クリッカーUIと重ならないよう、上側だけを使う
+      top = randomPercent(4, 30);
       return { left: left, top: top };
     }
 
-    function onCatTap(e) {
+    function comboBonusFromMax() {
+      return Math.floor(state.maxComboEver / 10);
+    }
+
+    function pointsPerTap() {
+      // 1 + レベル + コンボボーナス + （ネコの数 - 1）
+      return 1 + state.level + comboBonusFromMax() + (state.cats - 1);
+    }
+
+    function catCost() {
+      // ネコ追加のコスト（だんだん高くなる）
+      return Math.round(50 * Math.pow(1.6, state.cats - 1));
+    }
+
+    function levelCost() {
+      // レベルアップのコスト
+      return Math.round(120 * Math.pow(1.8, state.level));
+    }
+
+    function updateHud() {
+      if (pointsEl) pointsEl.textContent = formatNumber(state.points);
+      if (catsEl) catsEl.textContent = formatNumber(state.cats);
+      if (levelEl) levelEl.textContent = formatNumber(state.level);
+      if (comboEl) comboEl.textContent = formatNumber(currentCombo);
+      if (maxComboEl) maxComboEl.textContent = formatNumber(state.maxComboEver);
+      if (perTapEl) perTapEl.textContent = formatNumber(pointsPerTap());
+
+      if (buyCatBtn) {
+        var cCost = catCost();
+        buyCatBtn.textContent = '+1 ねこ（' + formatNumber(cCost) + ' pt）';
+        buyCatBtn.disabled = state.points < cCost;
+      }
+
+      if (levelUpBtn) {
+        var lCost = levelCost();
+        levelUpBtn.textContent = 'Level Up（' + formatNumber(lCost) + ' pt）';
+        levelUpBtn.disabled = state.points < lCost;
+      }
+    }
+
+    function handleCatTap(e, wrapEl, speechEl) {
       e.preventDefault();
       e.stopPropagation();
+
+      var now = Date.now();
+      if (now - lastTapTime <= 1000) {
+        currentCombo += 1;
+      } else {
+        currentCombo = 1;
+      }
+      lastTapTime = now;
+
+      if (currentCombo > state.maxComboEver) {
+        state.maxComboEver = currentCombo;
+      }
+
+      var gain = pointsPerTap();
+      state.points += gain;
+
+      // ネコの頭上に「+ポイント / コンボ数」を表示
+      if (currentCombo > 1) {
+        speechEl.textContent = '+' + gain + ' pt / combo ' + currentCombo;
+      } else {
+        speechEl.textContent = '+' + gain + ' pt';
+      }
+
       playCatSound();
-      showSpeech();
-      wrap.classList.add('cat-running');
+      showSpeech(speechEl);
+
+      if (wrapEl) {
+        wrapEl.classList.add('cat-running');
+        var pos = randomPositionOutsideLetter();
+        wrapEl.style.left = pos.left + '%';
+        wrapEl.style.top = pos.top + '%';
+        setTimeout(function () {
+          wrapEl.classList.remove('cat-running');
+        }, 450);
+      }
+
+      saveCatState(state);
+      updateHud();
+    }
+
+    function attachCat(wrapEl, imgEl, speechEl) {
+      if (!wrapEl || !imgEl || !speechEl) return;
+      imgEl.addEventListener('click', function (e) {
+        handleCatTap(e, wrapEl, speechEl);
+      });
+    }
+
+    function spawnCatInstance() {
+      var container = document.querySelector('.floating-photos');
+      if (!container) return;
+
+      var wrap = document.createElement('div');
+      wrap.className = 'float-cat-wrap';
+
+      var img = document.createElement('img');
+      img.src = 'haileyIMGs/neko.png';
+      img.alt = 'にゃあ';
+      img.className = 'float-cat';
+      img.title = 'タップしてみて';
+      img.loading = 'lazy';
+
+      var speechEl = document.createElement('span');
+      speechEl.className = 'cat-speech';
+      speechEl.setAttribute('aria-live', 'polite');
+
+      wrap.appendChild(img);
+      wrap.appendChild(speechEl);
+
       var pos = randomPositionOutsideLetter();
       wrap.style.left = pos.left + '%';
       wrap.style.top = pos.top + '%';
-      setTimeout(function () {
-        wrap.classList.remove('cat-running');
-      }, 450);
+
+      container.appendChild(wrap);
+
+      attachCat(wrap, img, speechEl);
     }
 
-    cat.addEventListener('click', onCatTap);
+    // 初期HUD
+    updateHud();
+
+    // 既存のネコにロジックを付与
+    attachCat(firstWrap, firstCat, firstSpeech);
+
+    // 保存されている cats の数ぶん、見た目のネコも復元（1匹目は既に画面にいるので -1）
+    if (state.cats > 1) {
+      for (var i = 0; i < state.cats - 1; i++) {
+        spawnCatInstance();
+      }
+    }
+
+    // ネコ追加購入（ゲーム内の数値だけ増える。見た目は1匹のまま）
+    if (buyCatBtn) {
+      buyCatBtn.addEventListener('click', function () {
+        var cost = catCost();
+        if (state.points < cost) return;
+        state.points -= cost;
+        state.cats += 1;
+        saveCatState(state);
+        updateHud();
+        // 黒ネコの見た目も増やす
+        spawnCatInstance();
+      });
+    }
+
+    // レベルアップ
+    if (levelUpBtn) {
+      levelUpBtn.addEventListener('click', function () {
+        var cost = levelCost();
+        if (state.points < cost) return;
+        state.points -= cost;
+        state.level += 1;
+        saveCatState(state);
+        updateHud();
+        // レベルアップ時にもクリックできるネコを増やす
+        spawnCatInstance();
+      });
+    }
   }
 
   createSakura();
   createButterflies();
   createFloatingHearts();
+  applyLetterRotateMessage();
   initLetter();
   initCat();
 })();
