@@ -1,0 +1,629 @@
+/* ===== Variables ===== */
+:root {
+  --pink-50: #fdf2f8;
+  --pink-100: #fce7f3;
+  --pink-200: #fbcfe8;
+  --pink-300: #f9a8d4;
+  --pink-400: #f472b6;
+  --pink-500: #ec4899;
+  --pink-600: #db2777;
+  --pink-700: #be185d;
+  --pink-800: #9d174d;
+  --paper: #fff5f9;
+  --paper-shadow: rgba(219, 39, 119, 0.15);
+  --sakura: #ffb7c5;
+  --gold: #e8b86d;
+}
+
+/* ===== Reset & Base ===== */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: clamp(14px, 2.5vw, 18px);
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  min-height: 100vh;
+  min-height: 100dvh;
+  overflow-x: hidden;
+  font-family: "Hiragino Maru Gothic ProN", "Yu Gothic", "Meiryo", sans-serif;
+  background: linear-gradient(160deg, var(--pink-100) 0%, var(--pink-200) 40%, var(--pink-300) 100%);
+  background-attachment: fixed;
+  color: #5c2d42;
+  position: relative;
+}
+
+/* ===== 桜の花びら ===== */
+.sakura-container {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.sakura-petal {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  background: radial-gradient(ellipse 60% 60% at 30% 30%, #fff, var(--sakura));
+  border-radius: 50% 0 50% 50%;
+  transform: rotate(0deg);
+  animation: sakura-fall linear infinite;
+  opacity: 0.85;
+}
+
+@keyframes sakura-fall {
+  0% {
+    transform: translateY(-10vh) rotate(0deg);
+    opacity: 0.9;
+  }
+  100% {
+    transform: translateY(110vh) translateX(20vw) rotate(720deg);
+    opacity: 0.6;
+  }
+}
+
+/* ===== ちょうちょ ===== */
+.butterflies {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+  overflow: hidden;
+}
+
+.butterfly {
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  animation: butterfly-fly linear infinite;
+  opacity: 0.9;
+}
+
+.butterfly::before,
+.butterfly::after {
+  content: "";
+  position: absolute;
+  width: 12px;
+  height: 16px;
+  background: linear-gradient(135deg, var(--pink-400), var(--pink-600));
+  border-radius: 50% 50% 50% 0;
+  top: 0;
+  left: 0;
+  transform-origin: right center;
+  animation: butterfly-wing 0.15s ease-in-out infinite alternate;
+}
+
+.butterfly::after {
+  left: auto;
+  right: 0;
+  border-radius: 50% 50% 0 50%;
+  transform-origin: left center;
+  animation-direction: alternate-reverse;
+}
+
+@keyframes butterfly-fly {
+  0%, 100% {
+    transform: translate(0, 0) rotate(-5deg);
+  }
+  25% {
+    transform: translate(15px, -20px) rotate(5deg);
+  }
+  50% {
+    transform: translate(-10px, -35px) rotate(-3deg);
+  }
+  75% {
+    transform: translate(20px, -15px) rotate(8deg);
+  }
+}
+
+@keyframes butterfly-wing {
+  from {
+    transform: scaleX(1) rotateY(0deg);
+  }
+  to {
+    transform: scaleX(0.6) rotateY(25deg);
+  }
+}
+
+/* ===== 浮遊ハート ===== */
+.floating-hearts {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.floating-heart {
+  position: absolute;
+  font-size: 1.2rem;
+  opacity: 0.4;
+  animation: heart-float 8s ease-in-out infinite;
+}
+
+@keyframes heart-float {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0.35;
+  }
+  33% {
+    transform: translate(10px, -30px) scale(1.1);
+    opacity: 0.5;
+  }
+  66% {
+    transform: translate(-15px, -15px) scale(0.9);
+    opacity: 0.4;
+  }
+}
+
+/* ===== ぷわぷわ浮く写真 ===== */
+/* ===== ページタイトル ===== */
+.page-title {
+  position: fixed;
+  top: 1.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 5;
+  font-size: clamp(0.9rem, 3vw, 1.1rem);
+  color: var(--pink-700);
+  letter-spacing: 0.15em;
+  opacity: 0.9;
+  animation: title-fade 2s ease-out;
+}
+
+@keyframes title-fade {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-10px);
+  }
+  to {
+    opacity: 0.9;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+.floating-photos {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+  overflow: hidden;
+}
+
+.float-photos > * {
+  pointer-events: none;
+}
+
+/* クロネコキャラ（クリック可能・手紙と被らない端に配置） */
+.float-cat-wrap {
+  position: absolute;
+  left: 18%;
+  top: 28%;
+  pointer-events: auto;
+  z-index: 5;
+  transition: left 0.4s ease-out, top 0.4s ease-out;
+}
+
+.float-cat {
+  display: block;
+  width: clamp(72px, 16vw, 120px);
+  height: auto;
+  max-height: clamp(72px, 16vw, 120px);
+  object-fit: contain;
+  object-position: center;
+  cursor: pointer;
+  pointer-events: auto;
+  vertical-align: middle;
+  filter: drop-shadow(0 6px 16px rgba(0, 0, 0, 0.2));
+  transition: transform 0.25s ease-out;
+  animation: photo-float 4s ease-in-out infinite;
+  animation-delay: 0.7s;
+}
+
+.float-cat:hover {
+  transform: scale(1.08);
+}
+
+.float-cat-wrap.cat-running .float-cat {
+  animation: none;
+  transform: scale(1.05);
+}
+
+.float-cat-wrap .float-cat {
+  max-width: 100%;
+  height: auto;
+}
+
+.cat-speech {
+  position: absolute;
+  left: 50%;
+  bottom: 100%;
+  transform: translateX(-50%) translateY(-6px);
+  padding: 4px 10px;
+  background: rgba(255, 255, 255, 0.95);
+  border: 2px solid var(--pink-300);
+  border-radius: 12px;
+  font-size: 0.9rem;
+  color: var(--pink-700);
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  box-shadow: 0 2px 10px var(--paper-shadow);
+  transition: opacity 0.15s ease-out;
+}
+
+.cat-speech.visible {
+  opacity: 1;
+  animation: speech-pop 0.6s ease-out;
+}
+
+@keyframes speech-pop {
+  0% {
+    transform: translateX(-50%) translateY(-6px) scale(0.8);
+    opacity: 0;
+  }
+  40% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(-50%) translateY(-12px) scale(1);
+    opacity: 0;
+  }
+}
+
+.float-photo {
+  position: absolute;
+  width: clamp(60px, 12vw, 100px);
+  height: clamp(60px, 12vw, 100px);
+  object-fit: cover;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(190, 24, 93, 0.25);
+  border: 3px solid rgba(255, 255, 255, 0.8);
+  animation: photo-float 4s ease-in-out infinite;
+}
+
+/* 上下30%に集中・写真間は最低100px（約25%以上空ける）・左右に散らす */
+.float-photo.photo-1 { left: 5%; top: 5%; animation-delay: 0s; }
+.float-photo.photo-2 { left: 30%; top: 5%; animation-delay: 0.5s; }
+.float-photo.photo-3 { left: 75%; top: 8%; animation-delay: 1s; }
+.float-photo.photo-4 { left: 94%; top: 5%; animation-delay: 1.5s; }
+.float-photo.photo-5 { left: 5%; top: 22%; animation-delay: 2s; }
+.float-photo.photo-6 { left: 30%; top: 78%; animation-delay: 2.5s; }
+.float-photo.photo-7 { left: 75%; top: 78%; animation-delay: 0.3s; }
+.float-photo.photo-8 { left: 94%; top: 78%; animation-delay: 1.2s; }
+.float-photo.photo-9 { left: 5%; top: 92%; animation-delay: 1.8s; }
+.float-photo.photo-10 { left: 30%; top: 92%; animation-delay: 0.8s; }
+
+@keyframes photo-float {
+  0%, 100% {
+    transform: translateY(0) rotate(-2deg);
+  }
+  50% {
+    transform: translateY(-12px) rotate(2deg);
+  }
+}
+
+@keyframes photo-float-mid {
+  0%, 100% {
+    transform: translateY(-50%) rotate(-2deg);
+  }
+  50% {
+    transform: translateY(calc(-50% - 12px)) rotate(2deg);
+  }
+}
+
+/* ===== 手紙エリア（手紙だけクリック可・それ以外はネコなどに透過） ===== */
+.letter-scene {
+  position: relative;
+  z-index: 10;
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  pointer-events: none;
+}
+
+.letter-scene .letter-wrapper,
+.letter-scene .letter-closed,
+.letter-scene .letter-opened,
+.letter-scene .letter-cover,
+.letter-scene .letter-paper,
+.letter-scene button {
+  pointer-events: auto;
+}
+
+.letter-wrapper {
+  position: relative;
+  width: min(320px, 90vw);
+}
+
+/* ===== 閉じた手紙（表紙） ===== */
+.letter-closed {
+  cursor: pointer;
+  perspective: 800px;
+  animation: letter-entrance 1s ease-out;
+}
+
+@keyframes letter-entrance {
+  from {
+    opacity: 0;
+    transform: scale(0.8) translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.letter-closed:active {
+  transform: scale(0.98);
+}
+
+.letter-cover {
+  background: linear-gradient(145deg, var(--paper) 0%, var(--pink-100) 100%);
+  border: 3px solid var(--pink-300);
+  border-radius: 8px;
+  padding: 2rem 1.5rem;
+  text-align: center;
+  box-shadow:
+    0 4px 0 var(--pink-400),
+    0 8px 24px var(--paper-shadow),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  position: relative;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.letter-cover::after {
+  content: "♥";
+  position: absolute;
+  bottom: -8px;
+  right: 12px;
+  width: 28px;
+  height: 28px;
+  line-height: 28px;
+  text-align: center;
+  background: linear-gradient(145deg, var(--pink-400), var(--pink-600));
+  color: #fff;
+  font-size: 0.9rem;
+  border-radius: 50%;
+  box-shadow: 0 2px 8px var(--paper-shadow);
+}
+
+.letter-closed:hover .letter-cover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 6px 0 var(--pink-400),
+    0 12px 28px var(--paper-shadow),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+.letter-cover-text {
+  font-size: 1.6rem;
+  font-weight: bold;
+  color: var(--pink-700);
+  letter-spacing: 0.1em;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.8);
+  margin-bottom: 0.25rem;
+}
+
+.letter-heart {
+  display: inline-block;
+  font-size: 2rem;
+  color: var(--pink-500);
+  animation: heart-beat 1.2s ease-in-out infinite;
+  margin-bottom: 0.5rem;
+}
+
+@keyframes heart-beat {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.15);
+  }
+}
+
+.letter-tap-hint {
+  font-size: 0.75rem;
+  color: var(--pink-600);
+  opacity: 0.9;
+  margin-top: 0.25rem;
+}
+
+/* ===== 開いた手紙 ===== */
+.letter-opened {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: letter-open-in 0.6s ease-out forwards;
+}
+
+.letter-opened.hidden {
+  display: none;
+}
+
+@keyframes letter-open-in {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.letter-paper {
+  background: linear-gradient(160deg, var(--paper) 0%, #fff 50%, var(--pink-50) 100%);
+  border: 3px solid var(--pink-300);
+  border-radius: 12px;
+  padding: 1.25rem;
+  max-width: min(340px, 92vw);
+  max-height: 85vh;
+  overflow-y: auto;
+  box-shadow:
+    0 8px 32px var(--paper-shadow),
+    inset 0 1px 0 rgba(255, 255, 255, 0.95);
+  position: relative;
+  animation: paper-appear 0.5s ease-out 0.2s both;
+}
+
+@keyframes paper-appear {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.letter-content {
+  margin-bottom: 1rem;
+}
+
+.letter-content p {
+  margin-bottom: 0.6rem;
+  line-height: 1.7;
+  color: #4a2c3a;
+}
+
+.letter-greeting {
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: var(--pink-700);
+}
+
+.pink-word {
+  color: var(--pink-600);
+  font-weight: bold;
+}
+
+.letter-sign {
+  margin-top: 1rem;
+  text-align: right;
+  font-style: italic;
+}
+
+.letter-video-wrap {
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  margin-top: 0.75rem;
+  aspect-ratio: 16 / 9;
+  background: #000;
+}
+
+.letter-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.close-letter-btn {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: var(--pink-200);
+  color: var(--pink-700);
+  font-size: 1.25rem;
+  line-height: 1;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s, transform 0.2s;
+  box-shadow: 0 2px 8px var(--paper-shadow);
+}
+
+.close-letter-btn:hover {
+  background: var(--pink-300);
+  transform: scale(1.05);
+}
+
+/* ===== スマホ 16:9 対応 ===== */
+@media (max-width: 430px) {
+  .float-photo {
+    width: clamp(50px, 14vw, 70px);
+    height: clamp(50px, 14vw, 70px);
+  }
+
+  .letter-cover-text {
+    font-size: 1.4rem;
+  }
+
+  .letter-heart {
+    font-size: 1.75rem;
+  }
+
+  .letter-wrapper {
+    width: min(300px, 92vw);
+  }
+}
+
+@media (orientation: portrait) and (max-height: 600px) {
+  .letter-scene {
+    padding: 0.5rem;
+  }
+
+  .letter-paper {
+    max-height: 80vh;
+    padding: 1rem;
+  }
+
+  .letter-content p {
+    margin-bottom: 0.4rem;
+  }
+}
+
+/* 16:9 ビューポート風（縦長スマホ） */
+@keyframes letter-fold {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(0.8) rotate(-5deg);
+    opacity: 0;
+  }
+}
+
+@keyframes confetti-pop {
+  0% {
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(calc(-50% + var(--tx)), calc(-50% + var(--ty))) scale(1);
+    opacity: 0;
+  }
+}
+
+@supports (height: 100dvh) {
+  body {
+    min-height: 100dvh;
+  }
+}

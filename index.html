@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Dear Hailey 💕 Happy Valentine</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- 桜の花びら -->
+  <div class="sakura-container" aria-hidden="true"></div>
+
+  <!-- ちょうちょ -->
+  <div class="butterflies" aria-hidden="true"></div>
+
+  <!-- 浮遊するハート -->
+  <div class="floating-hearts" aria-hidden="true"></div>
+
+  <!-- ぷわぷわ浮く写真たち -->
+  <div class="floating-photos">
+    <img src="haileyIMGs/IMG_20250512_155505_015.jpg" alt="Memory" class="float-photo photo-1">
+    <img src="haileyIMGs/IMG_20250512_155516_177.jpg" alt="Memory" class="float-photo photo-2">
+    <img src="haileyIMGs/IMG_20250513_160247_765.jpg" alt="Memory" class="float-photo photo-3">
+    <img src="haileyIMGs/IMG20250511190455.jpg" alt="Memory" class="float-photo photo-4">
+    <img src="haileyIMGs/IMG20250511190507.jpg" alt="Memory" class="float-photo photo-5">
+    <img src="haileyIMGs/IMG20250904182152.jpg" alt="Memory" class="float-photo photo-6">
+    <img src="haileyIMGs/IMG20250905112838.jpg" alt="Memory" class="float-photo photo-7">
+    <img src="haileyIMGs/IMG20250909130137_01.jpg" alt="Memory" class="float-photo photo-8">
+    <img src="haileyIMGs/Screenshot_2025-06-20-13-16-34-09_1c337646f29875672b5a61192b9010f9.jpg" alt="Memory" class="float-photo photo-9">
+    <img src="haileyIMGs/Screenshot_2025-07-13-04-59-58-63_6012fa4d4ddec268fc5c7112cbb265e7.jpg" alt="Memory" class="float-photo photo-10">
+    <!-- クロネコキャラ（haileyIMGsのneko.pngを使用・別名ならファイル名を変更） -->
+    <div class="float-cat-wrap">
+      <img src="haileyIMGs/neko.png" alt="にゃあ" class="float-cat" id="floatCat" title="タップしてみて" loading="lazy">
+      <span class="cat-speech" id="catSpeech" aria-live="polite">にゃあ</span>
+    </div>
+  </div>
+
+  <!-- ロマンチックなタイトル -->
+  <p class="page-title" aria-hidden="true">Happy Valentine's Day</p>
+
+  <!-- 中央の手紙 -->
+  <main class="letter-scene">
+    <div class="letter-wrapper" id="letterWrapper">
+      <!-- 手紙（閉じている状態） -->
+      <div class="letter-closed" id="letterClosed">
+        <div class="letter-cover">
+          <p class="letter-cover-text">dear hailey</p>
+          <span class="letter-heart">♥</span>
+          <p class="letter-tap-hint">tap to open</p>
+        </div>
+      </div>
+
+      <!-- 手紙（開いた状態） -->
+      <div class="letter-opened hidden" id="letterOpened">
+        <div class="letter-paper">
+          <div class="letter-content">
+            <!-- ========== ここから下の内容を自由に編集してください ========== -->
+            <p class="letter-greeting">Dear Hailey,</p>
+            <p>Happy Valentine's Day! </p>
+            <p>i was thinking what should i do 4 valentines day, i thought i cant make u happy by giving u a gift. u i guess i only can do give u the new experience and what only i can do is this kind of surpurize. i hope u will like it.its so cute right? i love u . i cant wait to see u.　Try tapping Stink. It took me about 30 minutes to create the Stink gimmick lol <br>
+            <span class="pink-word">love</span> you so much.</p>
+            <p>これからもずっと一緒にいてね。<br>
+            いつも<span class="pink-word">love</span>してる。</p>
+            <p class="letter-sign">From your <span class="pink-word">love</span> 💗</p>
+            <!-- ========== ここまで編集可能 ========== -->
+          </div>
+          <div class="letter-video-wrap">
+            <video id="letterVideo" class="letter-video" playsinline muted loop autoplay>
+              <source src="haileyIMGs/VID_20250508_173857_056.mp4" type="video/mp4">
+            </video>
+          </div>
+          <button type="button" class="close-letter-btn" id="closeLetterBtn" aria-label="手紙を閉じる">×</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
