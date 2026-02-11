@@ -222,7 +222,6 @@ body {
   object-position: center;
   cursor: pointer;
   pointer-events: auto;
-  vertical-align: middle;
   filter: drop-shadow(0 6px 16px rgba(0, 0, 0, 0.2));
   transition: transform 0.25s ease-out;
   animation: photo-float 4s ease-in-out infinite;
@@ -278,6 +277,81 @@ body {
     transform: translateX(-50%) translateY(-12px) scale(1);
     opacity: 0;
   }
+}
+
+/* ===== ネコクリックゲーム（クリックカウンターUI） ===== */
+.cat-game-panel {
+  position: fixed;
+  bottom: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 12;
+  padding: 0.6rem 0.9rem;
+  border-radius: 999px;
+  background: rgba(255, 245, 249, 0.94);
+  border: 2px solid var(--pink-300);
+  box-shadow: 0 6px 18px var(--paper-shadow);
+  display: inline-flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.7rem;
+  color: var(--pink-800);
+  backdrop-filter: blur(10px);
+}
+
+.cat-game-title {
+  font-weight: bold;
+  letter-spacing: 0.08em;
+  text-align: center;
+  margin-bottom: 0.1rem;
+  color: var(--pink-700);
+}
+
+.cat-game-row {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  justify-content: center;
+}
+
+.cat-game-row span:first-child {
+  opacity: 0.8;
+}
+
+.cat-game-row span:last-child {
+  font-weight: bold;
+}
+
+.cat-game-actions {
+  display: flex;
+  gap: 0.35rem;
+  margin-top: 0.15rem;
+  justify-content: center;
+}
+
+.cat-game-actions button {
+  border: none;
+  border-radius: 999px;
+  padding: 0.25rem 0.6rem;
+  font-size: 0.65rem;
+  background: var(--pink-300);
+  color: #fff;
+  cursor: pointer;
+  box-shadow: 0 2px 8px var(--paper-shadow);
+  transition: transform 0.15s ease-out, background 0.15s ease-out, box-shadow 0.15s ease-out;
+  white-space: nowrap;
+}
+
+.cat-game-actions button:hover:not(:disabled) {
+  background: var(--pink-400);
+  transform: translateY(-1px);
+  box-shadow: 0 3px 10px var(--paper-shadow);
+}
+
+.cat-game-actions button:disabled {
+  opacity: 0.5;
+  cursor: default;
+  box-shadow: none;
 }
 
 .float-photo {
